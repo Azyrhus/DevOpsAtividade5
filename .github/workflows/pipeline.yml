@@ -1,0 +1,48 @@
+name: Pipeline
+
+# Executa a cada push na branch main
+on:
+  push:
+    branches: [main]
+
+# Necessário para a Action de deploy escrever na branch gh-pages
+permissions:
+  contents: write
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v4
+
+      # ACTION 1: prepara o ambiente (Node.js + cache do npm)
+      - name: Preparar o Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Rodar os testes com cobertura
+        run: npm test
+
+      - name: Gerar o site
+        run: npm run build
+
+      # ACTION 2: guarda o relatório de cobertura como artefato da execução
+      - name: Guardar o relatório de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-de-cobertura
+          path: coverage/lcov-report
+
+      # ACTION 3: publica o site no GitHub Pages (branch gh-pages)
+      - name: Publicar no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

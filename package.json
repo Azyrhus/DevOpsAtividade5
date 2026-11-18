@@ -1,0 +1,23 @@
+{
+  "name": "conversor-de-unidades",
+  "version": "1.0.0",
+  "description": "Conversor de unidades com pipeline de CI/CD no GitHub Actions",
+  "scripts": {
+    "test": "jest --coverage",
+    "build": "node scripts/build.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ]
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^30.5.2"
+  }
+}
